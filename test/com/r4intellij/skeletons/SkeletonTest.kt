@@ -73,8 +73,8 @@ class SkeletonTest : RTestCase() {
     }
 
     private fun assertContainsLine(packageName: String, @Language("R") line: String) {
-        assertTrue(File(TEST_DIRECTORY, "$packageName.R").readLines().any { line ->
-            line.contains(line)
+        assertTrue(File(TEST_DIRECTORY, "$packageName.R").readLines().any { x ->
+            x.contains(line)
         })
     }
 }
