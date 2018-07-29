@@ -1,15 +1,21 @@
 package com.r4intellij.intentions;
 
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.openapi.roots.ModifiableModelsProvider;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.ArrayUtil;
 import com.r4intellij.packages.RIndexCache;
+import com.r4intellij.settings.LibraryUtil;
 import org.jetbrains.annotations.NotNull;
+import org.junit.After;
 
 import java.io.File;
+import java.nio.file.Files;
 
 import static com.r4intellij.RTestCase.createSkeletonLibrary;
 import static com.r4intellij.packages.RSkeletonGenerator.DEFAULT_PACKAGES;
+import static com.r4intellij.packages.RSkeletonGenerator.SKELETON_DIR_NAME;
 
 /**
  * @author Holger Brandl
@@ -46,6 +52,13 @@ public abstract class AbstractRIntentionTest extends CodeInsightFixtureTestCase 
         createSkeletonLibrary(myFixture, ArrayUtil.toStringArray(DEFAULT_PACKAGES));
     }
 
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        LibraryUtil.detachLibrary(myFixture.getModule().getProject(), LibraryUtil.R_SKELETONS, true);
+        myFixture.tearDown();
+        super.tearDown();
+    }
 
     protected void doTest() {
         myFixture.configureByFile(getTestName(false) + ".before.R");

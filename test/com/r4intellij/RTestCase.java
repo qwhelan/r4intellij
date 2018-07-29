@@ -1,6 +1,7 @@
 package com.r4intellij;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
@@ -79,7 +80,14 @@ public abstract class RTestCase extends UsefulTestCase {
     @Override
     @After
     public void tearDown() throws Exception {
+        final ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
+        LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(myFixture.getProject());
+        System.out.println(model.getLibraries().toString());
+        File skelTempDir = new File(Files.createTempDirectory("r4j_test_lib").toFile(), SKELETON_DIR_NAME);
         LibraryUtil.detachLibrary(myFixture.getModule().getProject(), LibraryUtil.R_SKELETONS, true);
+
+        // LibraryUtil.removeLibrary(myFixture.getProject(), Collections.singletonList(skelTempDir.toString()));
+    //    removeSkeletonLibrary(myFixture, "test");
         myFixture.tearDown();
         super.tearDown();
     }
@@ -178,6 +186,56 @@ public abstract class RTestCase extends UsefulTestCase {
         LibraryUtil.detachLibrary(myModule.getProject(), LibraryUtil.R_SKELETONS, isGlobal);
         LibraryUtil.createLibrary(myModule.getProject(), LibraryUtil.R_SKELETONS,
                 Collections.singletonList(skelTempDir.getAbsolutePath()), isGlobal);
+
+        // how to adjust global skeleton library here?
+//      Library globalLibrary = LibraryTablesRegistrar.getInstance().getLibraryTable().getModifiableModel().getLibraryByName(LibraryUtil.R_SKELETONS).getModifiableModel();
+//      globalLibrary.re(pathEntry, OrderRootType.CLASSES);
+//      globalLibrary.getModifiableModel().removeRoot()//      LibraryTablesRegistrar.getInstance().getLibraryTable().getModifiableModel().removeLibrary();
+
+        // works but makes testing painfully slow
+        PackageServiceUtilKt.rebuildIndex(myFixture.getProject());
+
+        RIndexCache.getInstance(); // debugging only
+    }
+
+    public static void removeSkeletonLibrary(CodeInsightTestFixture myFixture, String... packageNames) {
+        Module myModule = myFixture.getModule();
+
+        LocalFileSystem fileSystem = LocalFileSystem.getInstance();
+
+  /*      List<VirtualFile> skeletons = Arrays.stream(packageNames).map(pckgName -> {
+            Path skeletonPath = getSkeletonPath(pckgName).toPath();
+            VirtualFile fileByPath = fileSystem.findFileByPath(skeletonPath.toAbsolutePath().toString());
+            assert fileByPath != null && fileByPath.exists() : "missing package skeleton: " + pckgName;
+            return fileByPath;
+        }).collect(Collectors.toList());
+*/
+        File skelTempDir;
+        try {
+            skelTempDir = new File(Files.createTempDirectory("r4j_test_lib").toFile(), SKELETON_DIR_NAME);
+            skelTempDir.mkdir();
+        } catch (IOException e) {
+            throw new RuntimeException();
+        }
+
+
+ /*       skeletons.forEach(file -> {
+            try {
+                Path skelFile = new File(file.getPath()).toPath();
+                Files.copy(skelFile, skelTempDir.toPath().resolve(skelFile.getFileName()));
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+*/
+        // detach old and add new test-library
+        boolean isGlobal = true;
+        LibraryUtil.detachLibrary(myModule.getProject(), LibraryUtil.R_SKELETONS, isGlobal);
+
+//        LibraryUtil.createLibrary(myModule.getProject(), LibraryUtil.R_SKELETONS,
+//                Collections.singletonList(skelTempDir.getAbsolutePath()), isGlobal);
 
         // how to adjust global skeleton library here?
 //      Library globalLibrary = LibraryTablesRegistrar.getInstance().getLibraryTable().getModifiableModel().getLibraryByName(LibraryUtil.R_SKELETONS).getModifiableModel();
