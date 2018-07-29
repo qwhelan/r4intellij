@@ -198,7 +198,7 @@
     </orderEntry>
     <orderEntry type="library" name="Gradle: org.mockito:mockito-all:1.10.19" level="project" />
     <orderEntry type="module-library">
-      <library name="Gradle: org.jetbrains.plugins:IntelliLang:2017.3.5">
+      <library name="Gradle: org.jetbrains.plugins:IntelliLang:ideaIC-2017.3.5">
         <CLASSES>
           <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2017.3.5/69a951f31e6bb7bb9ee36c3107ce120d50229f95/ideaIC-2017.3.5/plugins/IntelliLang/lib/intellilang-jps-plugin.jar!/" />
           <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2017.3.5/69a951f31e6bb7bb9ee36c3107ce120d50229f95/ideaIC-2017.3.5/plugins/IntelliLang/lib/IntelliLang.jar!/" />
