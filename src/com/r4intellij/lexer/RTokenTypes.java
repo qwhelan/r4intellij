@@ -37,7 +37,7 @@ public class RTokenTypes {
     public static final IElementType INF_KEYWORD = new RElementType("INF_KEYWORD");         // infinity
     public static final IElementType NAN_KEYWORD = new RElementType("NAN_KEYWORD");
     // not-a-number in the IEEE floating point calculus (results of the operations respectively 1/0 and 0/0, for instance).
-    public static final IElementType NA_KEYWORD = new RElementType("NA_KEYWORD");          // absent (“Not Available”) data values
+    public static final IElementType NA_KEYWORD = new RElementType("NA_KEYWORD");          // absent ("Not Available") data values
 
 
 
