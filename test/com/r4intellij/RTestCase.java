@@ -43,7 +43,6 @@ public abstract class RTestCase extends UsefulTestCase {
     public static final String TEST_DATA_PATH = new File("testData").getAbsolutePath().replace(File.pathSeparatorChar, '/');
     protected CodeInsightTestFixture myFixture;
 
-
     @Override
     @Before
     public void setUp() throws Exception {
@@ -80,6 +79,7 @@ public abstract class RTestCase extends UsefulTestCase {
     @Override
     @After
     public void tearDown() throws Exception {
+        LibraryUtil.detachLibrary(myFixture.getModule().getProject(), LibraryUtil.R_SKELETONS, true);
         myFixture.tearDown();
         super.tearDown();
     }
