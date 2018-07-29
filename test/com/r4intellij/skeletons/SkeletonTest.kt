@@ -42,14 +42,18 @@ class SkeletonTest : RTestCase() {
         }
 
         val parseRunStatii = testPackages.map(buildSkeleton)
-        assertFalse(parseRunStatii.any { runResult -> runResult!!.exitCode != 0 })
+        assertFalse(parseRunStatii.any {
+            runResult -> runResult!!.exitCode != 0
+        })
 
         testPackages.forEach { pckg ->
+            System.out.println(pckg)
             val skeletonFile = File(TEST_DIRECTORY, pckg + DOT_R_EXTENSION)
+            System.out.println(skeletonFile.toString())
 
             assertTrue(isValidSkeleton(skeletonFile))
 
-            myFixture.configureByFile(skeletonFile.absolutePath)
+            myFixture.configureByFile(skeletonFile.toString().replace(File.separatorChar, '/'))
             myFixture.checkHighlighting() // should be all green
         }
 
@@ -73,8 +77,8 @@ class SkeletonTest : RTestCase() {
     }
 
     private fun assertContainsLine(packageName: String, @Language("R") line: String) {
-        assertTrue(File(TEST_DIRECTORY, "$packageName.R").readLines().any { line ->
-            line.contains(line)
+        assertTrue(File(TEST_DIRECTORY, "$packageName.R").readLines().any { x ->
+            x.contains(line)
         })
     }
 }

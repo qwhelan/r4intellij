@@ -91,6 +91,14 @@ public class LibraryUtil {
         modifiableModel.commit();
     }
 
+    public static void removeLibrary(@NotNull final Library lib, @NotNull final List<String> paths) {
+        Library.ModifiableModel modifiableModel = lib.getModifiableModel();
+        for (String dir : paths) {
+            //final VirtualFile pathEntry = LocalFileSystem.getInstance().findFileByPath(dir);
+            modifiableModel.removeRoot("file://" + dir, OrderRootType.CLASSES);
+        }
+        modifiableModel.commit();
+    }
 
     public static void detachLibrary(final Project project, final String libraryName, final boolean isGlobal) {
         final ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();

@@ -63,7 +63,7 @@ public abstract class RInspectionTest extends RTestCase {
     assertEquals(highlightInfo.get(0).type.getAttributesKey(), CodeInsightColors.NOT_USED_ELEMENT_ATTRIBUTES);
   }
 
-  protected void assertAllUsed(String expr) {
+  protected void assertAllUsed(@Language("R") String expr) {
     // todo needed? doExpr will fail if there's a warning!!
 
     CodeInsightTestFixture fixture = doExprTest(expr);

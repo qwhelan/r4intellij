@@ -48,7 +48,7 @@ class DependencyTests : RTestCase() {
 
 
     fun testTransitiveDependencies() {
-        createBaseLibraryWith("caret", "ggplot2");
+        createBaseLibraryWith("caret", "ggplot2")
         doExprTest("require(caret); ggplot(iris)")
     }
 

@@ -341,12 +341,16 @@ public class RSkeletonGenerator {
     private static boolean isComplete(File skeletonFile) {
         boolean hasEOF = false;
         try {
-            Scanner scanner = new Scanner(skeletonFile);
+            Scanner scanner = new Scanner(skeletonFile, "UTF-8");
 
+            String curLine = "";
             while (scanner.hasNextLine()) {
-                String curLine = scanner.nextLine().trim();
-                if (!curLine.isEmpty()) hasEOF = curLine.equals("## EOF");
+                curLine = scanner.nextLine().trim();
+                if (!curLine.isEmpty()) {
+                    hasEOF = curLine.equals("## EOF");
+                }
             }
+//            System.out.println(curLine);
         } catch (FileNotFoundException e) {
             return false;
         }
@@ -378,7 +382,7 @@ public class RSkeletonGenerator {
         // use basic file search because psi-read access is not allowed from here (and it's also faster)
         Integer fileVersion = -1;
         try {
-            Scanner scanner = new Scanner(skeletonFile);
+            Scanner scanner = new Scanner(skeletonFile, "UTF-8");
             while (scanner.hasNextLine()) {
                 String curLine = scanner.nextLine();
                 if (curLine.startsWith(".skeleton_")) {

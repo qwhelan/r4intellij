@@ -21,7 +21,7 @@ public class RCommandLineCalculatorTest {
     private static final String INTERPRETER_PATH = "/usr/bin/R";
 
     @NotNull
-    private static final String WORKING_DIRECTORY_PATH = "/home/user";
+    private static final String WORKING_DIRECTORY_PATH = "C:\\home\\user";
 
     @NotNull
     private static final Map<String, String> ENVS = calculateEnvs();

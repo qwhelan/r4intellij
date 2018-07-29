@@ -1,5 +1,7 @@
 #!/usr/bin/env Rscript
 
+options(encoding='UTF-8')
+
 args = commandArgs(TRUE)
 
 if (length(args) != 2) {
@@ -111,11 +113,20 @@ get_text_of = function(obj){
 
     lines = get_text_of_object(tmpFileName, obj, use_dput = FALSE)
 
-    ## use it if it's a function declaration
-    if (grepl('^(function|new)', lines[1])) {
-        return(lines)
+    if (length(lines) > 0) {
+    ## use it if it's not a function declaration
+    if (!grepl('^(function|new)', lines[1])) {
+        escape = FALSE
+        for (line in lines) {
+            if (grepl('\\\\', line)) {
+                escape = TRUE
+            }
+        }
+        if (False) {
+            return(lines)
+        }
     }
-
+}
     ## and fall back to print if not
     # http://stackoverflow.com/questions/31467732/does-r-have-function-startswith-or-endswith-like-python
 
@@ -196,8 +207,10 @@ for (symbol in functions) {
     # if (!inherits(errors, "try-error")) {
     for (line in lines) {
         line = gsub("<pointer: ([A-z0-9]*)>", "pointer(\"\\1\")", line)
+        line = gsub("<pointer: \\(nil\\)>", "pointer(\"0x0\")", line)
         # line = gsub("<S4 object ([A-z0-9]*)>", "(\"\\1\")", line)
         line = gsub("<S4 object of class .*>", "S4_object()", line)
+     #   line = gsub("\\\\\"", "\"", line)
 
 
         # sub = substring(line, 0, 10)
@@ -295,7 +308,7 @@ cat(paste0(".skeleton_package_version = \"", packageDescription(pName)$Version, 
 #      and after loading test (see com/r4intellij/packages/RPackageService.java:386)
 
 library(tools);
-chooseCRANmirror(ind = 1)
+#chooseCRANmirror(ind = 1)
 
 ## note: it may be more elegant to use something along `devtools::session_info` or the underlying `find_deps`. However this seems to fall back as well to the network based `available.packages`
 ## See https://github.com/hadley/devtools/blob/1ce84b04568ff7846c3da754f28e7e22a23c8737/R/deps.R#L326

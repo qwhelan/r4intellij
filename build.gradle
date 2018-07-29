@@ -1,14 +1,15 @@
 buildscript {
-    ext.kotlin_version = '1.2.30'
+    ext.kotlin_version = '1.2.60'
 
     repositories {
         mavenCentral()
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
 
     dependencies {
-        classpath "org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.2.0-SNAPSHOT"
+        classpath "gradle.plugin.org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.3.5"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -48,9 +49,9 @@ sourceSets {
 }
 
 intellij {
-//    version 'IC-LATEST-TRUNK-SNAPSHOT'
+ //   version 'IC-LATEST-TRUNK-SNAPSHOT'
 //    version 'IC-2017.1.2'
-    version 'IC-2017.3.5'
+    version 'IC-2018.2'
     pluginName 'R4Intellij'
     downloadSources false
     updateSinceUntilBuild false
