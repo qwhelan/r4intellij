@@ -90,9 +90,4 @@ public class RParserDefinition implements ParserDefinition {
         return new RFileImpl(viewProvider);
     }
 
-
-  //  @Override
- //   public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
- //       return SpaceRequirements.MAY;
- //   }
 }

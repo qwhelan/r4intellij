@@ -8,6 +8,7 @@ import org.junit.Test;
 import static com.r4intellij.debugger.data.RCommands.EXECUTE_AND_STEP_COMMAND;
 import static com.r4intellij.debugger.data.RFunctionConstants.SERVICE_ENTER_FUNCTION_SUFFIX;
 import static com.r4intellij.debugger.data.RFunctionConstants.SERVICE_FUNCTION_PREFIX;
+import static com.r4intellij.debugger.data.RLanguageConstants.LINE_SEPARATOR;
 import static com.r4intellij.debugger.data.RResponseConstants.*;
 import static com.r4intellij.debugger.executor.RExecutionResultType.*;
 import static org.junit.Assert.*;
@@ -23,19 +24,19 @@ public class RExecutionResultCalculatorImplTest {
 
     @Test
     public void completePlus() {
-        assertTrue(CALCULATOR.isComplete("x <- function() {\n" + PLUS_AND_SPACE));
+        assertTrue(CALCULATOR.isComplete("x <- function() {" + LINE_SEPARATOR + PLUS_AND_SPACE));
     }
 
 
     @Test
     public void completeBrowser() {
-        assertTrue(CALCULATOR.isComplete("ls()\n[1] \"x\"\n" + BROWSE_PREFIX + "1" + BROWSE_SUFFIX));
+        assertTrue(CALCULATOR.isComplete("ls()" + LINE_SEPARATOR + "[1] \"x\"" + LINE_SEPARATOR + BROWSE_PREFIX + "1" + BROWSE_SUFFIX));
     }
 
 
     @Test
     public void completeIncomplete() {
-        assertFalse(CALCULATOR.isComplete("ls()\n[1] \"x\"\n" + BROWSE_PREFIX));
+        assertFalse(CALCULATOR.isComplete("ls()" + LINE_SEPARATOR + "[1] \"x\"" + LINE_SEPARATOR + BROWSE_PREFIX));
     }
 
 
@@ -79,12 +80,12 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateDebuggingIn() {
         check(
                 "x()",
-                DEBUGGING_IN_PREFIX + "x()\n" +
-                        DEBUG_AT_PREFIX + "{\n" +
-                        "    .doTrace(" + JETBRAINS_THER_X_ENTER + "(), \"on entry\")\n" +
-                        "    {\n" +
-                        "        print(\"x\")\n" +
-                        "    }\n" +
+                DEBUGGING_IN_PREFIX + "x()" + LINE_SEPARATOR +
+                        DEBUG_AT_PREFIX + "{" + LINE_SEPARATOR +
+                        "    .doTrace(" + JETBRAINS_THER_X_ENTER + "(), \"on entry\")" + LINE_SEPARATOR +
+                        "    {" + LINE_SEPARATOR +
+                        "        print(\"x\")" + LINE_SEPARATOR +
+                        "    }" + LINE_SEPARATOR +
                         "}",
                 BROWSE_PREFIX + "3" + BROWSE_SUFFIX,
                 DEBUGGING_IN,
@@ -121,7 +122,7 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateUnbraceDebugAtWithOutput() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                "[1] 1 2 3\n" +
+                "[1] 1 2 3" + LINE_SEPARATOR +
                         DEBUG_AT_PREFIX + "x <- c(1)",
                 BROWSE_PREFIX + "3" + BROWSE_SUFFIX,
                 DEBUG_AT,
@@ -134,7 +135,7 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateDebugAtWithOutput() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                "[1] 1 2 3\n" +
+                "[1] 1 2 3" + LINE_SEPARATOR +
                         DEBUG_AT_LINE_PREFIX + "1: x <- c(1)",
                 BROWSE_PREFIX + "3" + BROWSE_SUFFIX,
                 DEBUG_AT,
@@ -147,8 +148,8 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateDebugAtFunction() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                DEBUG_AT_LINE_PREFIX + "2: x <- function() {\n" +
-                        "print(\"x\")\n" +
+                DEBUG_AT_LINE_PREFIX + "2: x <- function() {" + LINE_SEPARATOR +
+                        "print(\"x\")" + LINE_SEPARATOR +
                         "}",
                 BROWSE_PREFIX + "3" + BROWSE_SUFFIX,
                 DEBUG_AT,
@@ -161,10 +162,10 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateStartTraceBraceTopLevel() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                TRACING_PREFIX + "x() on entry \n" +
-                        "[1] \"x\"\n" +
-                        DEBUG_AT_PREFIX + "{\n" +
-                        "    print(\"x\")\n" +
+                TRACING_PREFIX + "x() on entry " + LINE_SEPARATOR +
+                        "[1] \"x\"" + LINE_SEPARATOR +
+                        DEBUG_AT_PREFIX + "{" + LINE_SEPARATOR +
+                        "    print(\"x\")" + LINE_SEPARATOR +
                         "}",
                 BROWSE_PREFIX + "3" + BROWSE_SUFFIX,
                 START_TRACE_BRACE,
@@ -177,10 +178,10 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateStartTraceBraceInside() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                TRACING_PREFIX + "f() on entry \n" +
-                        "[1] \"f\"\n" +
-                        DEBUG_AT_PREFIX + "for (i in 1:2) {\n" +
-                        "    print(i)\n" +
+                TRACING_PREFIX + "f() on entry " + LINE_SEPARATOR +
+                        "[1] \"f\"" + LINE_SEPARATOR +
+                        DEBUG_AT_PREFIX + "for (i in 1:2) {" + LINE_SEPARATOR +
+                        "    print(i)" + LINE_SEPARATOR +
                         "}",
                 BROWSE_PREFIX + "3" + BROWSE_SUFFIX,
                 START_TRACE_BRACE,
@@ -193,8 +194,8 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateStartTraceUnbrace() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                TRACING_PREFIX + "x() on entry \n" +
-                        "[1] \"x\"\n" +
+                TRACING_PREFIX + "x() on entry " + LINE_SEPARATOR +
+                        "[1] \"x\"" + LINE_SEPARATOR +
                         DEBUG_AT_PREFIX + "print(\"x\")",
                 BROWSE_PREFIX + "3" + BROWSE_SUFFIX,
                 START_TRACE_UNBRACE,
@@ -207,13 +208,13 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateContinueTrace() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[1L]], ...)\n" +
-                        DEBUGGING_IN_PREFIX + "FUN(c(-1, 0, 1)[[2L]], ...)\n" +
-                        DEBUG_AT_PREFIX + "{\n" +
-                        "    .doTrace(" + JETBRAINS_THER_X_ENTER + "(), \"on entry\")\n" +
-                        "    {\n" +
-                        "        print(\"x\")\n" +
-                        "    }\n" +
+                EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[1L]], ...)" + LINE_SEPARATOR +
+                        DEBUGGING_IN_PREFIX + "FUN(c(-1, 0, 1)[[2L]], ...)" + LINE_SEPARATOR +
+                        DEBUG_AT_PREFIX + "{" + LINE_SEPARATOR +
+                        "    .doTrace(" + JETBRAINS_THER_X_ENTER + "(), \"on entry\")" + LINE_SEPARATOR +
+                        "    {" + LINE_SEPARATOR +
+                        "        print(\"x\")" + LINE_SEPARATOR +
+                        "    }" + LINE_SEPARATOR +
                         "}",
                 BROWSE_PREFIX + "3" + BROWSE_SUFFIX,
                 CONTINUE_TRACE,
@@ -226,14 +227,14 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateContinueTraceWithOutputBefore() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                "[1] 1 2 3\n" +
-                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[1L]], ...)\n" +
-                        DEBUGGING_IN_PREFIX + "FUN(c(-1, 0, 1)[[2L]], ...)\n" +
-                        DEBUG_AT_PREFIX + "{\n" +
-                        "    .doTrace(" + JETBRAINS_THER_X_ENTER + "(), \"on entry\")\n" +
-                        "    {\n" +
-                        "        print(\"x\")\n" +
-                        "    }\n" +
+                "[1] 1 2 3" + LINE_SEPARATOR +
+                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[1L]], ...)" + LINE_SEPARATOR +
+                        DEBUGGING_IN_PREFIX + "FUN(c(-1, 0, 1)[[2L]], ...)" + LINE_SEPARATOR +
+                        DEBUG_AT_PREFIX + "{" + LINE_SEPARATOR +
+                        "    .doTrace(" + JETBRAINS_THER_X_ENTER + "(), \"on entry\")" + LINE_SEPARATOR +
+                        "    {" + LINE_SEPARATOR +
+                        "        print(\"x\")" + LINE_SEPARATOR +
+                        "    }" + LINE_SEPARATOR +
                         "}",
                 BROWSE_PREFIX + "3" + BROWSE_SUFFIX,
                 CONTINUE_TRACE,
@@ -246,14 +247,14 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateContinueTraceWithOutputAfter() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[1L]], ...)\n" +
-                        "[1] 1 2 3\n" +
-                        DEBUGGING_IN_PREFIX + "FUN(c(-1, 0, 1)[[2L]], ...)\n" +
-                        DEBUG_AT_PREFIX + "{\n" +
-                        "    .doTrace(" + JETBRAINS_THER_X_ENTER + "(), \"on entry\")\n" +
-                        "    {\n" +
-                        "        print(\"x\")\n" +
-                        "    }\n" +
+                EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[1L]], ...)" + LINE_SEPARATOR +
+                        "[1] 1 2 3" + LINE_SEPARATOR +
+                        DEBUGGING_IN_PREFIX + "FUN(c(-1, 0, 1)[[2L]], ...)" + LINE_SEPARATOR +
+                        DEBUG_AT_PREFIX + "{" + LINE_SEPARATOR +
+                        "    .doTrace(" + JETBRAINS_THER_X_ENTER + "(), \"on entry\")" + LINE_SEPARATOR +
+                        "    {" + LINE_SEPARATOR +
+                        "        print(\"x\")" + LINE_SEPARATOR +
+                        "    }" + LINE_SEPARATOR +
                         "}",
                 BROWSE_PREFIX + "3" + BROWSE_SUFFIX,
                 CONTINUE_TRACE,
@@ -278,7 +279,7 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateExitingFromWithOutputBefore() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                "[1] 1 2 3\n" +
+                "[1] 1 2 3" + LINE_SEPARATOR +
                         EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)",
                 BROWSE_PREFIX + "1" + BROWSE_SUFFIX,
                 RExecutionResultType.EXITING_FROM,
@@ -291,7 +292,7 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateExitingFromWithOutputAfter() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
+                EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
                         "[1] 1 2 3",
                 BROWSE_PREFIX + "1" + BROWSE_SUFFIX,
                 RExecutionResultType.EXITING_FROM,
@@ -304,8 +305,8 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateExitingFromWithOutputBeforeAndDebugAt() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                "[1] 1 2 3\n" +
-                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
+                "[1] 1 2 3" + LINE_SEPARATOR +
+                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
                         DEBUG_AT_LINE_PREFIX + "1: x <- c(1)",
                 BROWSE_PREFIX + "1" + BROWSE_SUFFIX,
                 RExecutionResultType.EXITING_FROM,
@@ -318,8 +319,8 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateExitingFromWithOutputAfterAndDebugAt() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
-                        "[1] 1 2 3\n" +
+                EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
+                        "[1] 1 2 3" + LINE_SEPARATOR +
                         DEBUG_AT_LINE_PREFIX + "1: x <- c(1)",
                 BROWSE_PREFIX + "1" + BROWSE_SUFFIX,
                 RExecutionResultType.EXITING_FROM,
@@ -332,8 +333,8 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateRecursiveExitingFrom() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
-                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
+                EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
+                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
                         EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)",
                 BROWSE_PREFIX + "1" + BROWSE_SUFFIX,
                 RECURSIVE_EXITING_FROM,
@@ -346,9 +347,9 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateRecursiveExitingFromWithOutputBefore() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                "[1] 1 2 3\n" +
-                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
-                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
+                "[1] 1 2 3" + LINE_SEPARATOR +
+                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
+                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
                         EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)",
                 BROWSE_PREFIX + "1" + BROWSE_SUFFIX,
                 RECURSIVE_EXITING_FROM,
@@ -361,8 +362,8 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateRecursiveExitingFromWithOutputInside() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                EXITING_FROM_PREFIX + "foo()\n" +
-                        "[1] 2 3 4 5 6\n" +
+                EXITING_FROM_PREFIX + "foo()" + LINE_SEPARATOR +
+                        "[1] 2 3 4 5 6" + LINE_SEPARATOR +
                         EXITING_FROM_PREFIX + "bar()",
                 BROWSE_PREFIX + "1" + BROWSE_SUFFIX,
                 RECURSIVE_EXITING_FROM,
@@ -375,9 +376,9 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateRecursiveExitingFromWithOutputAfter() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
-                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
-                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
+                EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
+                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
+                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
                         "[1] 1 2 3",
                 BROWSE_PREFIX + "1" + BROWSE_SUFFIX,
                 RECURSIVE_EXITING_FROM,
@@ -390,10 +391,10 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateRecursiveExitingFromWithOutputBeforeAndDebugAt() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                "[1] 1 2 3\n" +
-                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
-                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
-                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
+                "[1] 1 2 3" + LINE_SEPARATOR +
+                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
+                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
+                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
                         DEBUG_AT_LINE_PREFIX + "1: x <- c(1)",
                 BROWSE_PREFIX + "1" + BROWSE_SUFFIX,
                 RECURSIVE_EXITING_FROM,
@@ -406,9 +407,9 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateRecursiveExitingFromWithOutputInsideAndDebugAt() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                EXITING_FROM_PREFIX + "foo()\n" +
-                        "[1] 2 3 4 5 6\n" +
-                        EXITING_FROM_PREFIX + "bar()\n" +
+                EXITING_FROM_PREFIX + "foo()" + LINE_SEPARATOR +
+                        "[1] 2 3 4 5 6" + LINE_SEPARATOR +
+                        EXITING_FROM_PREFIX + "bar()" + LINE_SEPARATOR +
                         DEBUG_AT_LINE_PREFIX + "1: x <- c(1)",
                 BROWSE_PREFIX + "1" + BROWSE_SUFFIX,
                 RECURSIVE_EXITING_FROM,
@@ -421,10 +422,10 @@ public class RExecutionResultCalculatorImplTest {
     public void calculateRecursiveExitingFromWithOutputAfterAndDebugAt() {
         check(
                 EXECUTE_AND_STEP_COMMAND,
-                EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
-                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
-                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)\n" +
-                        "[1] 1 2 3\n" +
+                EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
+                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
+                        EXITING_FROM_PREFIX + "FUN(c(-1, 0, 1)[[3L]], ...)" + LINE_SEPARATOR +
+                        "[1] 1 2 3" + LINE_SEPARATOR +
                         DEBUG_AT_LINE_PREFIX + "1: x <- c(1)",
                 BROWSE_PREFIX + "1" + BROWSE_SUFFIX,
                 RECURSIVE_EXITING_FROM,

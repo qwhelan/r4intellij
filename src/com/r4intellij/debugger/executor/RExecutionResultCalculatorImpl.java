@@ -21,7 +21,7 @@ public class RExecutionResultCalculatorImpl implements RExecutionResultCalculato
     private static final Pattern START_TRACE_PATTERN = Pattern.compile("^" + TRACING_PREFIX + ".* on entry( )*$");
 
     @NotNull
-    private static final Pattern LINE_BREAK_PATTERN = Pattern.compile("(\r|\n|\r\n)");
+    private static final Pattern LINE_BREAK_PATTERN = Pattern.compile("(\r\n|\r|\n)");
 
 
     @Override
