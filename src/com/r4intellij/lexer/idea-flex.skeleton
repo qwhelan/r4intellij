@@ -57,6 +57,8 @@
   /** zzAtEOF == true <=> the scanner is at the EOF */
   private boolean zzAtEOF;
 
+  private boolean zzEOFDone;
+
 --- user class code
 
 --- constructor declaration

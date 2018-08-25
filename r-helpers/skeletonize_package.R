@@ -122,7 +122,7 @@ get_text_of = function(obj){
                 escape = TRUE
             }
         }
-        if (False) {
+        if (FALSE) {
             return(lines)
         }
     }
@@ -308,7 +308,7 @@ cat(paste0(".skeleton_package_version = \"", packageDescription(pName)$Version, 
 #      and after loading test (see com/r4intellij/packages/RPackageService.java:386)
 
 library(tools);
-#chooseCRANmirror(ind = 1)
+chooseCRANmirror(ind = 1)
 
 ## note: it may be more elegant to use something along `devtools::session_info` or the underlying `find_deps`. However this seems to fall back as well to the network based `available.packages`
 ## See https://github.com/hadley/devtools/blob/1ce84b04568ff7846c3da754f28e7e22a23c8737/R/deps.R#L326

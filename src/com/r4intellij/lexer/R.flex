@@ -23,7 +23,7 @@ WHITE_SPACE_CHAR=[\ \n\r\t\f]
 // Identifiers consist of a sequence of letters, digits, the period (‘.’) and the underscore.
 // They must not start with a digit or an underscore, or with a period followed by a digit.
 // TODO: Notice also that objects can have names that are not identifiers! ("x" <- 1, assign("x$a",1))
-LETTER = [a-zA-Z]|[:unicode_uppercase_letter:]|[:unicode_lowercase_letter:]|[:unicode_titlecase_letter:]|[:unicode_modifier_letter:]|[:unicode_other_letter:]|[:unicode_letter_number:]
+LETTER = [a-zA-Z]| :unicode_uppercase_letter: | :unicode_lowercase_letter: | :unicode_titlecase_letter: | :unicode_modifier_letter: | :unicode_other_letter: | :unicode_letter_number:
 IDENT_START = {LETTER}|"."{LETTER}|"._"|".."
 IDENT_CONTINUE = {LETTER}|[0-9_"."]
 QUOTED_IDENTIFIER = "`" [^`]* "`"
@@ -72,8 +72,8 @@ private Stack<IElementType> myExpectedBracketsStack = new Stack<IElementType>();
 %%
 
 <YYINITIAL> {
-[\n]                        { return RElementTypes.R_NL; }
-{END_OF_LINE_COMMENT}       { return RParserDefinition.END_OF_LINE_COMMENT; }
+\n                        { return RElementTypes.R_NL; }
+\r\n                        { return RElementTypes.R_NL; }
 [\ ]                        { return RParserDefinition.SPACE; }
 [\t]                        { return RParserDefinition.TAB; }
 [\f]                        { return RParserDefinition.FORMFEED; }
@@ -95,9 +95,6 @@ private Stack<IElementType> myExpectedBracketsStack = new Stack<IElementType>();
 // integer constants
 {LONG_INTEGER}              { return RElementTypes.R_INTEGER; }
 
-// string constants
-{STRING}
-                  { return RElementTypes.R_STRING; }
 // special constants
 "NULL"                      { return RElementTypes.R_NULL; }
 "NA"                        { return RElementTypes.R_NA; }
@@ -122,8 +119,6 @@ private Stack<IElementType> myExpectedBracketsStack = new Stack<IElementType>();
 
 {IDENTIFIER}                { return RElementTypes.R_IDENTIFIER; }
 
-//special operators
-"%"{LETTER_OR_OP}*"%"       { return RElementTypes.R_INFIX_OP; }
 
 // Infix and prefix operators
 ":::"                       { return RElementTypes.R_TRIPLECOLON; }
@@ -199,6 +194,14 @@ private Stack<IElementType> myExpectedBracketsStack = new Stack<IElementType>();
 ";"                         { return RElementTypes.R_SEMI; }
 
 "?"                         { return RElementTypes.R_HELP; }
+{END_OF_LINE_COMMENT}       { return RParserDefinition.END_OF_LINE_COMMENT; }
+//special operators
+"%"{LETTER_OR_OP}*"%"       { return RElementTypes.R_INFIX_OP; }
+// string constants
+{STRING}
+                  { return RElementTypes.R_STRING; }
+
 .                           { return RParserDefinition.BAD_CHARACTER; }
+
 
 }

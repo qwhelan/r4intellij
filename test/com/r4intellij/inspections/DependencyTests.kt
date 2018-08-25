@@ -53,7 +53,7 @@ class DependencyTests : RTestCase() {
     }
 
     fun testResolveCorrectFilter() {
-        createBaseLibraryWith("dplyr");
+        createBaseLibraryWith("dplyr")
         doExprTest("require(dplyr); filter(iris)")
 
         // make sure that this is resolved to dplyr::filter and not stats::filter
