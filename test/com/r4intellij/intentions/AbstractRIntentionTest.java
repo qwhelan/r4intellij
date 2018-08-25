@@ -56,7 +56,7 @@ public abstract class AbstractRIntentionTest extends CodeInsightFixtureTestCase 
     @After
     public void tearDown() throws Exception {
         LibraryUtil.detachLibrary(myFixture.getModule().getProject(), LibraryUtil.R_SKELETONS, true);
-        myFixture.tearDown();
+       // myFixture.tearDown();
         super.tearDown();
     }
 

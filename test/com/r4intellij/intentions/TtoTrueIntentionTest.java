@@ -21,12 +21,12 @@ public class TtoTrueIntentionTest extends AbstractRIntentionTest {
     }
 
 
-    public void testBooleanAssignment() throws Throwable {
+    public void testBooleanAssignment() {
         doExprTest("foo = <caret>T", "foo = TRUE<caret>");
     }
 
 
-    public void testLoopCheck() throws Throwable {
+    public void testLoopCheck() {
         doTest();
     }
 

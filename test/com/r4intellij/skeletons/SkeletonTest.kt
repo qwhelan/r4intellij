@@ -26,13 +26,13 @@ class SkeletonTest : RTestCase() {
     //    }
 
     fun testParsability() {
-        val testPackages = listOf(//"base", // must work
-                "stats" // must work
-//                "dplyr", // must work
-//                "ggplot2", // correct serialization of objects like GeomBar
-//                "lubridate", // issues with embedded <s4 objects?
-//                "R.utils", // issues with GenericSummary
-//                "graphics"
+        val testPackages = listOf("base", // must work
+                "stats", // must work
+                "dplyr", // must work
+                "ggplot2", // correct serialization of objects like GeomBar
+                "lubridate", // issues with embedded <s4 objects?
+                "R.utils", // issues with GenericSummary
+                "graphics"
         )
 
         TEST_DIRECTORY.mkdir()
@@ -42,7 +42,9 @@ class SkeletonTest : RTestCase() {
         }
 
         val parseRunStatii = testPackages.map(buildSkeleton)
-        assertFalse(parseRunStatii.any { runResult -> runResult!!.exitCode != 0 })
+        assertFalse(parseRunStatii.any {
+            runResult -> runResult!!.exitCode != 0
+        })
 
         testPackages.forEach { pckg ->
             System.out.println(pckg)
